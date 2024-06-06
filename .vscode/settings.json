@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "gfileutils.h": "c",
+        "gerror.h": "c"
+    },
+    "editor.formatOnSave": true    
+}
