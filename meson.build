@@ -80,3 +80,18 @@ executable(
     dependencies: dependencies,
     install: true
 )
+
+executable(
+    'basic_turor_01_hello_world',
+    'src/basic-tutorial/01_hello_world.cpp',
+    dependencies: dependencies,
+    install: true
+)
+
+executable(
+    'basic_turor_02_concepts',
+    'src/basic-tutorial/02_concepts.cpp',
+    dependencies: dependencies,
+    install: true
+)
+
