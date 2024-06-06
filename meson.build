@@ -95,3 +95,9 @@ executable(
     install: true
 )
 
+executable(
+    'basic_turor_03_dynamic_pipelines',
+    'src/basic-tutorial/03_dynamic_pipelines.cpp',
+    dependencies: dependencies,
+    install: true
+)
