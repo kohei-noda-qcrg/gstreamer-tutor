@@ -8,17 +8,18 @@ int tutorial_main(int argc, char *argv[])
     gst_init(&argc, &argv);
 
     auto source = gst_element_factory_make("videotestsrc", "source");
+    auto filter = gst_element_factory_make("vertigotv", "filter");
     auto sink = gst_element_factory_make("autovideosink", "sink");
 
     auto pipeline = gst_pipeline_new("test-pipeline");
-    if (!pipeline || !source || !sink)
+    if (!pipeline || !source || !filter || !sink)
     {
         g_printerr("Not all element could be created.\n");
         return -1;
     }
 
-    gst_bin_add_many(GST_BIN(pipeline), source, sink, NULL);
-    if (gst_element_link(source, sink) != TRUE)
+    gst_bin_add_many(GST_BIN(pipeline), source, filter, sink, NULL);
+    if (gst_element_link_many(source, filter, sink, NULL) != TRUE)
     {
         g_printerr("Elements could not be linked.\n");
         gst_object_unref(pipeline);
