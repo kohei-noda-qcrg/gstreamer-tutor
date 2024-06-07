@@ -20,9 +20,9 @@ int tutorial_main(int argc, char *argv[])
 
     CustomData data;
     data.source = gst_element_factory_make("uridecodebin", "source");
-    data.convert = gst_element_factory_make("audioconver", "convert");
+    data.convert = gst_element_factory_make("audioconvert", "convert");
     data.resample = gst_element_factory_make("audioresample", "resample");
-    data.sink = gst_element_factory_make("audoaudiosink", "sink");
+    data.sink = gst_element_factory_make("autoaudiosink", "sink");
 
     data.pipeline = gst_pipeline_new("test-pipeline");
 
