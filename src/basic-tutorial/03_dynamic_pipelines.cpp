@@ -33,7 +33,8 @@ int tutorial_main(int argc, char *argv[])
     }
 
     gst_bin_add_many(GST_BIN(data.pipeline), data.source, data.convert, data.resample, data.sink, NULL);
-    if (!gst_element_link_many(data.source, data.convert, data.resample, data.sink, NULL) == TRUE)
+    // Don't link data.source because of no source pads.
+    if (!gst_element_link_many(data.convert, data.resample, data.sink, NULL) == TRUE)
     {
         g_printerr("Elements could not be linked.\n");
         gst_object_unref(data.pipeline);
