@@ -28,7 +28,7 @@ int tutorial_main(int argc, char *argv[])
 
     if (!data.pipeline || !data.source || !data.convert || !data.resample || !data.sink)
     {
-        g_printerr("Not alll elements could be created.\n");
+        g_printerr("Not all elements could be created.\n");
         return -1;
     }
 
@@ -43,6 +43,7 @@ int tutorial_main(int argc, char *argv[])
 
     g_object_set(data.source, "uri", "https://gstreamer.freedesktop.org/data/media/sintel_trailer-480p.webm", NULL);
 
+    // data.source pads are not initialliy available because demuxer pad is a dynamic pad.
     g_signal_connect(data.source, "pad-added", G_CALLBACK(pad_added_handler), &data);
 
     if (gst_element_set_state(data.pipeline, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE)
@@ -100,6 +101,52 @@ int tutorial_main(int argc, char *argv[])
     gst_element_set_state(data.pipeline, GST_STATE_NULL);
     gst_object_unref(data.pipeline);
     return 0;
+}
+
+static void unref_caps_and_sink_pad(GstCaps *new_pad_caps, GstPad *sink_pad)
+{
+    if (new_pad_caps != NULL)
+    {
+        gst_caps_unref(new_pad_caps);
+    }
+    if (sink_pad != NULL)
+    {
+        gst_object_unref(sink_pad);
+    }
+}
+
+static void pad_added_handler(GstElement *src, GstPad *new_pad, CustomData *data)
+{
+    GstCaps *new_pad_caps = NULL;
+    auto *sink_pad = gst_element_get_static_pad(data->convert, "sink");
+    if (gst_pad_is_linked(sink_pad))
+    {
+        g_print("We are already linked. Ignoring.\n");
+        unref_caps_and_sink_pad(new_pad_caps, sink_pad);
+        return;
+    }
+
+    // Check pad's type
+    new_pad_caps = gst_pad_get_current_caps(new_pad);
+    auto new_pad_struct = gst_caps_get_structure(new_pad_caps, 0);
+    auto new_pad_type = gst_structure_get_name(new_pad_struct);
+    if (!g_str_has_prefix(new_pad_type, "audio/x-raw"))
+    {
+        g_print("It has type '%s' which is not raw audio. Ignoring.\n", new_pad_type);
+        unref_caps_and_sink_pad(new_pad_caps, sink_pad);
+        return;
+    }
+
+    // link
+    auto ret = gst_pad_link(new_pad, sink_pad);
+    if (GST_PAD_LINK_FAILED(ret))
+    {
+        g_print("Type is '%s' but link failed.\n", new_pad_type);
+    }
+    else
+    {
+        g_print("Link succeeded (type '%s').\n", new_pad_type);
+    }
 }
 
 int main(int argc, char *argv[])
