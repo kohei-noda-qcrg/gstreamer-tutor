@@ -24,7 +24,12 @@ int main(int argc, char *argv[]) {
     }
 
     // gst-launch-1.0 videotestsrc ! videoconvert ! video/x-raw,width=720,height=480 ! x264enc ! "video/x-h264,profile=(string)high" ! rtph264pay config-interval=1 ! udpsink host=127.0.0.1 port=7001
-    std::string pipeline_desc = "videotestsrc ! videoconvert ! video/x-raw,width=480,height=320 ! x264enc ! video/x-h264,profile=high ! rtph264pay config-interval=1 ! queue ! udpsink host=" + std::string(host) + " port=" + port;
+    std::string video_setting = "! ";
+    if (GST_VERSION_MAJOR == 1 && GST_VERSION_MINOR == 24 && GST_VERSION_MICRO == 4) {
+        // Cannot use avdec_h264, use h264parse ! d3d11h264dec instead
+        video_setting = "! video/x-h264,profile=(string)high ! ";
+    }
+    std::string pipeline_desc = "videotestsrc ! videoconvert ! video/x-raw,width=480,height=320 ! x264enc " + video_setting +  "rtph264pay config-interval=1 ! queue ! udpsink host=" + std::string(host) + " port=" + port;
     auto pipeline = gst_parse_launch(pipeline_desc.c_str(), NULL);
     gst_element_set_state(pipeline, GST_STATE_PLAYING);
     // wait until error or EOS

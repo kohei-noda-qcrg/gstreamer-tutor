@@ -13,9 +13,14 @@ int main(int argc, char *argv[]) {
     }
     gst_init(&argc, &argv);
 
+    std::string avdec_h264 = "avdec_h264";
     g_print("port_num: %d\n", port_num);
+    if(GST_VERSION_MAJOR == 1 && GST_VERSION_MINOR == 24 && GST_VERSION_MICRO == 4) {
+        // Cannot use avdec_h264, use h264parse ! d3d11h264dec instead
+        avdec_h264 = "h264parse ! d3d11h264dec";
+    }
     // gst-launch-1.0.exe udpsrc port=port_num caps="application/x-rtp,media=(string)video" ! rtph264depay ! h264parse ! d3d11h264dec  ! videoconvert  ! queue ! autovideosink
-    std::string pipeline_desc = "udpsrc port=" + port + " caps=\"application/x-rtp,media=(string)video\" ! rtph264depay ! h264parse ! d3d11h264dec  ! videoconvert  ! queue ! autovideosink";
+    std::string pipeline_desc = "udpsrc port=" + port + " caps=\"application/x-rtp,media=(string)video\" ! rtph264depay ! " + avdec_h264 + " ! videoconvert ! queue ! autovideosink";
     auto pipeline = gst_parse_launch(pipeline_desc.c_str(), NULL);
     gst_element_set_state(pipeline, GST_STATE_PLAYING);
     // wait until error or EOS
