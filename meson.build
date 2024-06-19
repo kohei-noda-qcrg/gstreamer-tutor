@@ -1,5 +1,5 @@
-project('gsttutor', 'cpp', version: '1.0', default_options: ['warning_level=3', 'cpp_std=c++20'])
-add_project_arguments('-std=c++20', language: 'cpp')
+project('gsttutor', 'cpp', version: '1.0', default_options: ['warning_level=3', 'cpp_std=c++17'])
+add_project_arguments('-std=c++17', language: 'cpp')
 add_project_arguments('-Wfatal-errors', language: 'cpp')
 add_project_arguments('-fpermissive', language: 'cpp')
 add_project_arguments('-Wno-narrowing', language: 'cpp')
@@ -95,9 +95,23 @@ executable(
     install: true
 )
 
-executable(
+library(
     'basic_turor_03_dynamic_pipelines',
     'src/basic-tutorial/03_dynamic_pipelines.cpp',
+    dependencies: dependencies,
+    install: true
+)
+
+executable(
+    'udpsinksample',
+    'src/h264-rtpstreaming/udpsink.cpp',
+    dependencies: dependencies,
+    install: true
+)
+
+executable(
+    'udpsrcsample',
+    'src/h264-rtpstreaming/udpsrc.cpp',
     dependencies: dependencies,
     install: true
 )
