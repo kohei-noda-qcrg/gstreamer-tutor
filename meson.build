@@ -115,3 +115,10 @@ executable(
     dependencies: dependencies,
     install: true
 )
+
+executable(
+    'device-monitor',
+    'src/device-monitor/device-monitor-sample.cpp',
+    dependencies: dependencies,
+    install: true,
+)
