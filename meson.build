@@ -122,3 +122,10 @@ executable(
     dependencies: dependencies,
     install: true,
 )
+
+executable(
+    'multicamera',
+    'src/multiple-camera/multiple-camera.cpp',
+    dependencies: dependencies,
+    install: true,
+)
