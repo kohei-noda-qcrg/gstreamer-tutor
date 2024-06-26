@@ -1,5 +1,6 @@
 #include "bus.hpp"
 #include "clock.hpp"
+#include "X264Enc.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -8,21 +9,24 @@ int main(int argc, char *argv[])
     GMainLoop *loop = g_main_loop_new(NULL, FALSE);
     GstElement *pipeline = gst_pipeline_new("streaming");
 
+    // source
     GstElement *video_source = gst_element_factory_make("ksvideosrc", "video_source");
     g_object_set(video_source, "device-index", 0, NULL);
-
+    // convert
     GstElement *video_convert = gst_element_factory_make("videoconvert", "video_convert");
     GstElement *prev_video_enc_queue = gst_element_factory_make("queue", "prev_video_enc_queue");
+    // encode
     GstElement *video_encode = gst_element_factory_make("x264enc", "video_encode");
-    g_object_set(video_encode, "tune", "zerolatency", NULL);
+    g_object_set(video_encode, "tune", GST_X264_ENC_TUNE_ZEROLATENCY, NULL);
+    // pay/depay
     GstElement *video_pay = gst_element_factory_make("rtph264pay", "video_pay");
     g_object_set(video_pay, "config-interval", 1, NULL);
     GstElement *video_queue = gst_element_factory_make("queue", "video_queue");
-
     GstElement *video_depay = gst_element_factory_make("rtph264depay", "video_depay");
+    // decode
     GstElement *video_decode = gst_element_factory_make("avdec_h264", "video_decode");
     GstElement *video_convert2 = gst_element_factory_make("videoconvert", "video_convert2");
-
+    // sink
     GstElement *video_sink = gst_element_factory_make("autovideosink", "autovideosink");
 
     /*

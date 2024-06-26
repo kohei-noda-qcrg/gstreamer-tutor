@@ -1,5 +1,6 @@
 #include "bus.hpp"
 #include "clock.hpp"
+#include "X264Enc.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -26,7 +27,7 @@ int main(int argc, char *argv[])
     g_object_set(video_source, "device-index", 0, NULL);
     GstElement *video_convert = gst_element_factory_make("videoconvert", "video_convert");
     GstElement *video_encode = gst_element_factory_make("x264enc", "video_encode");
-    g_object_set(video_encode, "tune", "zerolatency", NULL);
+    g_object_set(video_encode, "tune", GST_X264_ENC_TUNE_ZEROLATENCY, NULL);
     GstElement *video_pay = gst_element_factory_make("rtph264pay", "video_pay");
     g_object_set(video_pay, "config-interval", 1, NULL);
     GstElement *video_queue = gst_element_factory_make("queue", "video_queue");
