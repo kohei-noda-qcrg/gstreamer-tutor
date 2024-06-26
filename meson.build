@@ -129,3 +129,21 @@ executable(
     dependencies: dependencies,
     install: true,
 )
+
+executable(
+    'streaming-receiver',
+    'src/streaming/streaming-receiver.cpp',
+    'src/streaming/bus.cpp',
+    'src/streaming/clock.cpp',
+    dependencies: dependencies,
+    install: true,
+)
+
+executable(
+    'streaming-sender',
+    'src/streaming/streaming-sender.cpp',
+    'src/streaming/bus.cpp',
+    'src/streaming/clock.cpp',
+    dependencies: dependencies,
+    install: true,
+)
