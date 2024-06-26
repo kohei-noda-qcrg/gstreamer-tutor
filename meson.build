@@ -147,3 +147,13 @@ executable(
     dependencies: dependencies,
     install: true,
 )
+
+executable(
+    'video-preview',
+    'src/streaming/video-preview.cpp',
+    'src/streaming/bus.cpp',
+    'src/streaming/clock.cpp',
+    dependencies: dependencies,
+    install: true,
+)
+
