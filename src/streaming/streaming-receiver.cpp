@@ -22,16 +22,18 @@ int main(int argc, char *argv[])
     GstElement *audio_sink = gst_element_factory_make("autoaudiosink", "audio_sink");
 
     GstElement *video_source = gst_element_factory_make("udpsrc", "video_source");
-    g_object_set(video_source, "port", 7002, "caps", gst_caps_from_string("application/x-rtp,media=(string)video"), NULL);
+    g_object_set(video_source, "port", 7002, "caps", gst_caps_from_string("application/x-rtp"), NULL);
+    GstElement *video_rtp_jitter_buffer = gst_element_factory_make("rtpjitterbuffer", "video_rtp_jitter_buffer");
+    g_object_set(video_rtp_jitter_buffer, "mode", 1, "do-retransmission", TRUE, "drop-on-latency", TRUE, "latency", 1000, NULL);
     GstElement *video_depay = gst_element_factory_make("rtph264depay", "video_depay");
     GstElement *video_decode = gst_element_factory_make("avdec_h264", "video_decode");
     GstElement *video_convert = gst_element_factory_make("videoconvert", "video_convert");
     GstElement *video_queue = gst_element_factory_make("queue", "video_queue");
     GstElement *video_sink = gst_element_factory_make("autovideosink", "video_sink");
 
-    gst_bin_add_many(GST_BIN(pipeline), audio_source, audio_depay, audio_decode, audio_convert, audio_queue, audio_sink, video_source, video_depay, video_decode, video_convert, video_queue, video_sink, NULL);
+    gst_bin_add_many(GST_BIN(pipeline), audio_source, audio_depay, audio_decode, audio_convert, audio_queue, audio_sink, video_source, video_rtp_jitter_buffer, video_depay, video_decode, video_convert, video_queue, video_sink, NULL);
     gst_element_link_many(audio_source, audio_depay, audio_decode, audio_convert, audio_queue, audio_sink, NULL);
-    gst_element_link_many(video_source, video_depay, video_decode, video_convert, video_queue, video_sink, NULL);
+    gst_element_link_many(video_source, video_rtp_jitter_buffer, video_depay, video_decode, video_convert, video_queue, video_sink, NULL);
 
     GstBus *bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
     gst_bus_add_watch(bus, gst_bus_call, loop);
