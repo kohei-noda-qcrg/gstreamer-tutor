@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
     GstElement *audio_queue = gst_element_factory_make("queue", "audio_queue");
     GstElement *audio_encode = gst_element_factory_make("opusenc", "audio_encode");
     GstElement *audio_pay = gst_element_factory_make("rtpopuspay", "audio_pay");
+    GstElement *audio_queue_before_sink = gst_element_factory_make("queue", "audio_queue_before_sink");
     GstElement *audio_sink = gst_element_factory_make("udpsink", "audio_sink");
     g_object_set(audio_sink, "host", "127.0.0.1", "port", 7001, NULL);
 
@@ -35,8 +36,8 @@ int main(int argc, char *argv[])
     g_object_set(video_sink, "host", "127.0.0.1", "port", 7002, NULL);
 
 
-    gst_bin_add_many(GST_BIN(pipeline), audio_source, audio_convert, audio_queue, audio_encode, audio_pay, audio_sink, video_source, video_convert, video_encode, video_pay, video_queue, video_sink, NULL);
-    gst_element_link_many(audio_source, audio_convert, audio_queue, audio_encode, audio_pay, audio_sink, NULL);
+    gst_bin_add_many(GST_BIN(pipeline), audio_source, audio_convert, audio_queue, audio_encode, audio_pay, audio_queue_before_sink, audio_sink, video_source, video_convert, video_encode, video_pay, video_queue, video_sink, NULL);
+    gst_element_link_many(audio_source, audio_convert, audio_queue, audio_encode, audio_pay, audio_queue_before_sink, audio_sink, NULL);
     gst_element_link_many(video_source, video_convert, video_encode, video_pay, video_queue, video_sink, NULL);
 
     GstBus *bus = gst_pipeline_get_bus(GST_PIPELINE(pipeline));
