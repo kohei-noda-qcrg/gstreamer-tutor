@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     GstElement *audio_source = gst_element_factory_make("udpsrc", "audio_source");
     g_object_set(audio_source, "port", 7001, "caps", gst_caps_from_string("application/x-rtp"), NULL);
     GstElement *audio_rtp_jitter_buffer = gst_element_factory_make("rtpjitterbuffer", "audio_rtp_jitter_buffer");
-    g_object_set(audio_rtp_jitter_buffer, "mode", 1, "do-retransmission", TRUE, "drop-on-latency", TRUE, "latency", 1000, NULL);
+    g_object_set(audio_rtp_jitter_buffer, "mode", 1, "do-retransmission", TRUE, "drop-on-latency", TRUE, "latency", 100, NULL);
     GstElement *audio_depay = gst_element_factory_make("rtpopusdepay", "audio_depay");
     GstElement *audio_decode = gst_element_factory_make("opusdec", "audio_decode");
     GstElement *audio_convert = gst_element_factory_make("audioconvert", "audio_convert");
@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     GstElement *video_source = gst_element_factory_make("udpsrc", "video_source");
     g_object_set(video_source, "port", 7002, "caps", gst_caps_from_string("application/x-rtp"), NULL);
     GstElement *video_rtp_jitter_buffer = gst_element_factory_make("rtpjitterbuffer", "video_rtp_jitter_buffer");
-    g_object_set(video_rtp_jitter_buffer, "mode", 1, "do-retransmission", TRUE, "drop-on-latency", TRUE, "latency", 1000, NULL);
+    g_object_set(video_rtp_jitter_buffer, "mode", 1, "do-retransmission", TRUE, "drop-on-latency", TRUE, "latency", 100, NULL);
     GstElement *video_depay = gst_element_factory_make("rtph264depay", "video_depay");
     GstElement *video_decode = gst_element_factory_make("avdec_h264", "video_decode");
     GstElement *video_convert = gst_element_factory_make("videoconvert", "video_convert");
